@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "231788930306",
+    "project_id": "loolocator-21b07",
+    "storage_bucket": "loolocator-21b07.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231788930306:android:3759905d0b1c5950904e1b",
+        "android_client_info": {
+          "package_name": "org.classapp.loolocator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ9uy5-ngTrkdevgQa6VrV3dco2aHj9wA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
