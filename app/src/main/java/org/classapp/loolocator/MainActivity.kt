@@ -3,6 +3,7 @@ package org.classapp.loolocator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -27,11 +28,10 @@ import androidx.navigation.compose.rememberNavController
 import org.classapp.loolocator.ui.theme.LooLocatorTheme
 
 class MainActivity : ComponentActivity() {
-    private lateinit var sharedViewModel: SharedViewModel
+    private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
         setContent {
             LooLocatorTheme {
                 // A surface container using the 'background' color from the theme
@@ -85,7 +85,7 @@ fun MainScreenWithBottomNavBar(sharedViewModel: SharedViewModel) {
                 ListedScreen(sharedViewModel, navController)
             }
             composable(route = DestinationScreen.NearMe.route) {
-                NearMeScreen(sharedViewModel)
+                NearMeScreen(sharedViewModel, navController)
             }
             composable(route = DestinationScreen.AddToilet.route) {
                 AddToiletScreen()

@@ -84,8 +84,20 @@ fun ListedScreen(sharedViewModel: SharedViewModel, navController: NavController)
                         toilet.looLocation!!.latitude, toilet.looLocation.longitude
                     )
                     // Only add the toilet to the list if its distance is less than or equal to 10 km
-                    if (toilet.distance!! <= 10) {
-                        toiletList.add(toilet)
+                    if (toilet.distance!! <= sharedViewModel.maxRangeValue.intValue) {
+                        // Check each filter condition
+                        if ((sharedViewModel.haveMale.value && toilet.haveMale == true) ||
+                            (!sharedViewModel.haveMale.value) ||
+                            (sharedViewModel.haveFemale.value && toilet.haveFemale == true) ||
+                            (!sharedViewModel.haveFemale.value) ||
+                            (sharedViewModel.haveBaby.value && toilet.haveBaby == true) ||
+                            (!sharedViewModel.haveBaby.value) ||
+                            (sharedViewModel.havePrayer.value && toilet.havePrayer == true) ||
+                            (!sharedViewModel.havePrayer.value) ||
+                            (sharedViewModel.haveDisabled.value && toilet.haveDisabled == true) ||
+                            (!sharedViewModel.haveDisabled.value)) {
+                            toiletList.add(toilet)
+                        }
                     }
                 }
             }
