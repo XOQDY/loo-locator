@@ -17,10 +17,11 @@ class FilterViewActivity : AppCompatActivity() {
     private lateinit var babySwitch: Switch
     private lateinit var prayerSwitch: Switch
     private lateinit var disabledSwitch: Switch
-    private val viewModel: SharedViewModel by viewModels()
+    private lateinit var viewModel: SharedViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = (application as App).viewModel
         setContentView(R.layout.activity_filter_view)
 
         filterRangeSeekBar = findViewById(R.id.filterRangeSeekBar)

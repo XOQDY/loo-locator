@@ -28,10 +28,11 @@ import androidx.navigation.compose.rememberNavController
 import org.classapp.loolocator.ui.theme.LooLocatorTheme
 
 class MainActivity : ComponentActivity() {
-    private val sharedViewModel: SharedViewModel by viewModels()
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedViewModel = (application as App).viewModel
         setContent {
             LooLocatorTheme {
                 // A surface container using the 'background' color from the theme
