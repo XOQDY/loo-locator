@@ -4,8 +4,13 @@
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="login">Login</string>
-    <string name="title_activity_main2">MainActivity2</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="back_button">Go Back Button</string>
+    <string name="title_activity_filter_view">Toilet Filter</string>
+    <string name="range_filter">Maximum Toilet Distance</string>
+    <string name="filter_description">Filter Require</string>
+    <string name="male">Male Toilet</string>
+    <string name="female">Female Toilet</string>
+    <string name="disabled">Disabled Toilet</string>
+    <string name="baby">Baby Toilet</string>
+    <string name="prayer">Prayer Room</string>
 </resources>

@@ -1,6 +1,7 @@
 package org.classapp.loolocator
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,11 +14,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -53,8 +62,9 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import org.classapp.loolocator.ui.theme.LooLocatorTheme
 import org.classapp.loolocator.utils.calculateDistance
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NearMeScreen(sharedViewModel: SharedViewModel) {
+fun NearMeScreen(sharedViewModel: SharedViewModel, navController: NavController) {
     val screenContext = LocalContext.current
     val locationProvider = LocationServices.getFusedLocationProviderClient(screenContext)
     val toiletList = remember {
@@ -84,8 +94,16 @@ fun NearMeScreen(sharedViewModel: SharedViewModel) {
                         toilet.looLocation!!.latitude, toilet.looLocation.longitude
                     )
                     // Only add the toilet to the list if its distance is less than or equal to 10 km
-                    if (toilet.distance!! <= 10) {
-                        toiletList.add(toilet)
+                    if (toilet.distance!! <= sharedViewModel.maxRangeValue.intValue) {
+                        // Check each filter condition
+                        if (((sharedViewModel.haveMale.value && toilet.haveMale == true) || (!sharedViewModel.haveMale.value))
+                            && ((sharedViewModel.haveFemale.value && toilet.haveFemale == true) || (!sharedViewModel.haveFemale.value))
+                            && ((sharedViewModel.haveBaby.value && toilet.haveBaby == true) || (!sharedViewModel.haveBaby.value))
+                            && ((sharedViewModel.havePrayer.value && toilet.havePrayer == true) || (!sharedViewModel.havePrayer.value))
+                            && ((sharedViewModel.haveDisabled.value && toilet.haveDisabled == true) || (!sharedViewModel.haveDisabled.value)))
+                        {
+                            toiletList.add(toilet)
+                        }
                     }
                 }
             }
@@ -126,6 +144,11 @@ fun NearMeScreen(sharedViewModel: SharedViewModel) {
         }
     }
 
+    LaunchedEffect(key1 = sharedViewModel.haveFemale.value) {
+        Log.d("NearMeScreen", "haveFemale: ${sharedViewModel.haveFemale.value}")
+        getToiletFromFirebase(onFirebaseQuerySuccess, onFirebaseQueryFailed)
+    }
+
     LooLocatorTheme {
         Surface (
             modifier = Modifier
@@ -138,7 +161,18 @@ fun NearMeScreen(sharedViewModel: SharedViewModel) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Toilet Locations Near Me")
+            TopAppBar(
+                title = { Text(text = "Toilet Locations Near Me") },
+                actions = {
+                    val context = LocalContext.current
+                    IconButton(onClick = {
+                        val intent = Intent(context, FilterViewActivity::class.java)
+                        context.startActivity(intent)
+                    }) {
+                        Icon(Icons.Filled.Menu, contentDescription = "Filter")
+                    }
+                }
+            )
                 LocationCoordinateDisplay(lat = latValue.toString(), lon = lonValue.toString())
                 if (latValue != null && lonValue != null) {
                     MapDisplay(lat = latValue!!, lon = lonValue!!, toilets = toiletList)
@@ -205,7 +239,8 @@ private suspend fun CameraPositionState.centerOnLocation(location: LatLng) = ani
 @Composable
 fun NearMeScreenPreview() {
     val sharedViewModel = SharedViewModel()
-    NearMeScreen(sharedViewModel)
+    val navController = rememberNavController()
+    NearMeScreen(sharedViewModel, navController)
 }
 
 @Composable

@@ -1,5 +1,6 @@
 package org.classapp.loolocator
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.NavController
 import com.google.firebase.Firebase
@@ -84,8 +86,16 @@ fun ListedScreen(sharedViewModel: SharedViewModel, navController: NavController)
                         toilet.looLocation!!.latitude, toilet.looLocation.longitude
                     )
                     // Only add the toilet to the list if its distance is less than or equal to 10 km
-                    if (toilet.distance!! <= 10) {
-                        toiletList.add(toilet)
+                    if (toilet.distance!! <= sharedViewModel.maxRangeValue.intValue) {
+                        // Check each filter condition
+                        if (((sharedViewModel.haveMale.value && toilet.haveMale == true) || (!sharedViewModel.haveMale.value))
+                            && ((sharedViewModel.haveFemale.value && toilet.haveFemale == true) || (!sharedViewModel.haveFemale.value))
+                            && ((sharedViewModel.haveBaby.value && toilet.haveBaby == true) || (!sharedViewModel.haveBaby.value))
+                            && ((sharedViewModel.havePrayer.value && toilet.havePrayer == true) || (!sharedViewModel.havePrayer.value))
+                            && ((sharedViewModel.haveDisabled.value && toilet.haveDisabled == true) || (!sharedViewModel.haveDisabled.value)))
+                        {
+                            toiletList.add(toilet)
+                        }
                     }
                 }
             }
@@ -110,6 +120,15 @@ fun ListedScreen(sharedViewModel: SharedViewModel, navController: NavController)
                     navigationIcon = {
                         IconButton(onClick = { navController.navigateUp() }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    },
+                    actions = {
+                        val context = LocalContext.current
+                        IconButton(onClick = {
+                            val intent = Intent(context, FilterViewActivity::class.java)
+                            context.startActivity(intent)
+                        }) {
+                            Icon(Icons.Filled.Menu, contentDescription = "Filter")
                         }
                     }
                 )
